@@ -4,12 +4,17 @@ import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
 import { ROUTER } from "./routes";
-import { initializeObservability } from "./services/observability";
+import {
+  initializeObservability,
+  ObservabilityErrorBoundary,
+} from "./services/observability";
 
 initializeObservability();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={ROUTER} future={{ v7_startTransition: true }} />
+    <ObservabilityErrorBoundary>
+      <RouterProvider router={ROUTER} future={{ v7_startTransition: true }} />
+    </ObservabilityErrorBoundary>
   </StrictMode>
 );

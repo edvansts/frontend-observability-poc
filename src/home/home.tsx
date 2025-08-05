@@ -27,6 +27,11 @@ function Home() {
             <button>Go to Hello World</button>
           </Link>
         </div>
+        <div>
+          <Link to="/dashboard">
+            <button style={{ marginLeft: "0.5rem" }}>Go to Dashboard</button>
+          </Link>
+        </div>
         <p>
           Edit <code>src/Home.tsx</code> and save to test HMR
         </p>
