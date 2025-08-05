@@ -22,9 +22,11 @@ function Home() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <Link to="/hello-world">
-          <button>Go to Hello World</button>
-        </Link>
+        <div>
+          <Link to="/hello-world">
+            <button>Go to Hello World</button>
+          </Link>
+        </div>
         <p>
           Edit <code>src/Home.tsx</code> and save to test HMR
         </p>
