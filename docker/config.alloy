@@ -1,0 +1,74 @@
+
+loki.process "logs_process_client" {
+  forward_to = [loki.write.logs_write_client.receiver]
+
+  stage.logfmt {
+    mapping = {
+      "kind"            = "",
+      "app_name"        = "",
+      "app_environment" = "",
+    }
+  }
+
+  stage.labels {
+    values = {
+      kind = "kind",
+      Application = "app_name",
+      Environment = "app_environment",
+      service_name = "app_name",
+      app = "app_name",
+    }
+  }
+}
+
+logging {
+  level  = "debug"
+  format = "logfmt"
+}
+
+loki.write "logs_write_client" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+
+    tls_config {
+      insecure_skip_verify = true
+    }
+  }
+}
+
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.jaeger.input]
+  }
+}
+
+otelcol.exporter.otlp "jaeger" {
+  client {
+    endpoint = "jaeger:4317"
+    tls {
+      insecure = true
+    }
+  }
+}
+
+faro.receiver "faro_frontend" {
+  server {
+    listen_address = "0.0.0.0"
+    listen_port    = 12347
+    cors_allowed_origins = ["*"]
+  }
+
+  log_format = "logfmt"
+
+  output {
+    logs   = [loki.process.logs_process_client.receiver]
+    traces = [otelcol.exporter.otlp.jaeger.input]
+  }
+}
